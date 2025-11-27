@@ -1,20 +1,20 @@
 #include "iGraphics.h"
 
-int playerX = 100;         // Player স্থির পজিশন
-int playerY = 100;         // Ground level
+int playerX = 100;
+int playerY = 100;
 int playerW = 50;
 int playerH = 50;
 
-int obsX = 800;            // Obstacle শুরু পজিশন (ডানের দিক)
+int obsX = 800;
 int obsY = 100;
 int obsW = 40;
 int obsH = 40;
 
-int jump = 0;              // 0 = না, 1 = জাম্পিং
+int jumping = 0;
 int jumpSpeed = 0;
 int gravity = 2;
 
-bool gameOver = false;
+int gameOver = 0;
 
 void iDraw()
 {
@@ -22,31 +22,32 @@ void iDraw()
 
     if (gameOver)
     {
-        iText(300, 300, "Game Over!", GLUT_BITMAP_TIMES_ROMAN_24);
+        iSetColor(255, 0, 0);
+        iText(350, 300, "GAME OVER!", GLUT_BITMAP_TIMES_ROMAN_24);
+        iText(330, 260, "Press R to Restart", GLUT_BITMAP_TIMES_ROMAN_24);
         return;
     }
 
-    // Player Box
+    // Player
     iSetColor(0, 255, 0);
     iFilledRectangle(playerX, playerY, playerW, playerH);
 
-    // Obstacle Box
+    // Obstacle
     iSetColor(255, 0, 0);
     iFilledRectangle(obsX, obsY, obsW, obsH);
 }
 
-void updateGame()
+void update()
 {
     if (gameOver) return;
 
-    // অবস্ট্যাকল বাম দিকে আসবে
+    // obstacle move
     obsX -= 5;
+    if (obsX <= -50)
+        obsX = 800;
 
-    if (obsX < -50)
-        obsX = 800;   // আবার ডানে পাঠানো হবে
-
-    // জাম্প লজিক
-    if (jump)
+    // jump physics
+    if (jumping)
     {
         playerY += jumpSpeed;
         jumpSpeed -= gravity;
@@ -54,46 +55,46 @@ void updateGame()
         if (playerY <= 100)
         {
             playerY = 100;
-            jump = 0;
+            jumping = 0;
         }
     }
 
-    // Collision Check
-    bool collideX = (playerX + playerW > obsX) && (playerX < obsX + obsW);
-    bool collideY = (playerY < obsY + obsH);
+    // collision detection
+    int hitX = (playerX + playerW > obsX) && (playerX < obsX + obsW);
+    int hitY = (playerY < obsY + obsH);
 
-    if (collideX && collideY)
-    {
-        gameOver = true;
-    }
+    if (hitX && hitY)
+        gameOver = 1;
 }
 
 void iKeyboard(unsigned char key)
 {
     if (key == ' ')
     {
-        if (!jump && !gameOver)
+        if (!jumping && !gameOver)
         {
-            jump = 1;
-            jumpSpeed = 20;   // Jump power
+            jumping = 1;
+            jumpSpeed = 20;
         }
     }
 
     if (key == 'r')
     {
-        // Restart
-        gameOver = false;
+        gameOver = 0;
         obsX = 800;
         playerY = 100;
-        jump = 0;
+        jumping = 0;
     }
 }
 
+void iMouseMove(int mx, int my) {}
+void iMouse(int button, int state, int mx, int my) {}
 void iSpecialKeyboard(unsigned char key) {}
 
 int main()
 {
-    iSetTimer(15, updateGame);
-    iInitialize(900, 500, "Basic Runner Game");
+    iSetTimer(15, update);
+    iWindowedMode(800, 600, "Runner Game");
+    iStartMainLoop();
     return 0;
 }
