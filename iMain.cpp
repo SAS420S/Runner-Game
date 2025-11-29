@@ -81,7 +81,7 @@ void iDraw() {
     iFilledRectangle(obsX, obsY, obsW, obsH);
 }
 
-void iKeyboard(unsigned char key) {
+void iKeyPress(unsigned char key) {
     if(key == ' ') {
         if(!isJumping && !gameOver) {
             isJumping = 1;
@@ -106,7 +106,7 @@ int main() {
     jumpTimer = iSetTimer(30, jumpUpdate);
 
     iWindowedMode(800, 600, "Box Runner Game");
-    iStart();
+    iStartMainLoop();
 
     return 0;
 }
