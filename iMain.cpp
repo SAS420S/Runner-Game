@@ -1,5 +1,6 @@
 #include<stdio.h>
 #include "iGraphics.h"
+#include "iSound.h"
 
 // Running frames
 Image runFrames[10];
@@ -11,8 +12,8 @@ Image obstacleImg, bg;
 // GAME VARIABLES
 int gameState = 0;
 
-int playerX = 100;
-int playerY = 100;
+int playerX = 150;
+int playerY = 150;
 
 int jumpY = 0;
 int isJumping = 0;
@@ -23,8 +24,8 @@ int isSliding = 0;
 int playerFrame = 0;
 int frameTimer;
 
-int obsX = 800;
-int obsY = 100;
+int obsX = 1200;
+int obsY = 150;
 int obsW = 40;
 int obsH = 40;
 
@@ -49,7 +50,7 @@ void updateFrame() {
 
 void resetGame() {
     gameOver = 0;
-    obsX = 800;
+    obsX = 1200;
     jumpY = 0;
     isJumping = 0;
     jumpUp = 1;
@@ -58,7 +59,7 @@ void resetGame() {
 }
 
 void createNewObstacle() {
-    obsX = 800;
+    obsX = 1200;
     if(rand() % 2 == 0) obsType = 1;
     else obsType = 2;
     if(obsType == 2) {
@@ -67,7 +68,7 @@ void createNewObstacle() {
     }
     else {
         obsH = 40;
-        obsY = 100;
+        obsY = 150;
     }
 }
 
@@ -210,7 +211,7 @@ void loadResources() {
     iLoadImage(&jumpFrames[7], "assets/images/Jump7.png");
     iLoadImage(&jumpFrames[8], "assets/images/Jump8.png");
     iLoadImage(&jumpFrames[9], "assets/images/Jump9.png");
-    //Resize Jump Images 
+    //Resize Jump Images
     double jumpRatio;
     for(int i=0; i<10; i++){
         jumpRatio = (double)jumpFrames[i].width / jumpFrames[i].height;
@@ -227,7 +228,7 @@ void loadResources() {
     iLoadImage(&slideFrames[7], "assets/images/Slide7.png");
     iLoadImage(&slideFrames[8], "assets/images/Slide8.png");
     iLoadImage(&slideFrames[9], "assets/images/Slide9.png");
-    //Resize Sliding Images 
+    //Resize Sliding Images
     double slideRatio;
     for(int i=0; i<10; i++){
         slideRatio = (double)slideFrames[i].width / slideFrames[i].height;
@@ -261,13 +262,12 @@ void loadResources() {
 
 int main()
 {
-    loadResour();
+    loadResources();
     moveTimer = iSetTimer(30, moveObstacle);
     jumpTimer = iSetTimer(30, jumpUpdate);
     frameTimer = iSetTimer(80, updateFrame);
     srand(time(0));
-    iWindowedMode(800, 600, "Road Runner");
+    iWindowedMode(1200, 800, "Road Runner");
     iStartMainLoop();
     return 0;
 }
-    
