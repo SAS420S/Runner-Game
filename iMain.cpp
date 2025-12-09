@@ -1,5 +1,9 @@
 #include<stdio.h>
+#include<stdlib.h>
+#include<time.h>
 #include "iGraphics.h"
+#include "iFont.h"
+#define SDL_MAIN_HANDLED
 #include "iSound.h"
 
 // Running frames
@@ -12,8 +16,8 @@ Image obstacleImg, bg;
 // GAME VARIABLES
 int gameState = 0;
 
-int playerX = 150;
-int playerY = 150;
+int playerX = 150, playerY = 150;
+int bgX1 = 0; bgX2 = 1200;
 
 int jumpY = 0;
 int isJumping = 0;
@@ -24,10 +28,8 @@ int isSliding = 0;
 int playerFrame = 0;
 int frameTimer;
 
-int obsX = 1200;
-int obsY = 150;
-int obsW = 40;
-int obsH = 40;
+int obsX = 1200, obsY = 150;
+int obsW = 40, obsH = 40;
 
 int obsType = 1;
 
@@ -36,7 +38,6 @@ int score = 0;
 
 int moveTimer, jumpTimer;
 
-//Animation frame every few milliseconds
 void updateFrame() {
     if(gameState != 1) return;
     if(gameOver) {
@@ -59,7 +60,7 @@ void resetGame() {
 }
 
 void createNewObstacle() {
-    obsX = 1200;
+    obsX = (rand()%500) + 1200;
     if(rand() % 2 == 0) obsType = 1;
     else obsType = 2;
     if(obsType == 2) {
@@ -73,11 +74,12 @@ void createNewObstacle() {
 }
 
 // MOVE OBSTACLE + COLLISION CHECK
-void moveObstacle() {
+void moveObsbg() {
     if(gameState != 1) return;
     if(gameOver) return;
     obsX -= 10;
-    score += 1;
+    bgX1 -= 10;
+    bgX2 -= 10;
     if(obsX + obsW < 0) {
         createNewObstacle();
     }
@@ -86,6 +88,12 @@ void moveObstacle() {
     int ph = isSliding ? 20 : 40;
     int ox = obsX;
     int oy = obsY;
+    if(bgX1 + 1200 <= 0){
+        bgX1 = bgX2 + 1200;
+    }
+    if(bgX2 + 1200 <= 0){
+        bgX2 = bgX1 + 1200;
+    }
     if(px < ox + obsW && px + 40 > ox && py < oy + obsH && py + ph > oy) {
         if(obsType == 2 && isSliding) {
             // SAFE
@@ -118,7 +126,6 @@ void jumpUpdate() {
 void iDraw() {
     iClear();
 
-    iShowLoadedImage(0, 0, &bg);
     // MENU
     if(gameState == 0) {
         iText(300, 400, "ROAD RUNNER", GLUT_BITMAP_TIMES_ROMAN_24);
@@ -132,6 +139,8 @@ void iDraw() {
         iText(300, 260, "Press R to Restart", GLUT_BITMAP_HELVETICA_18);
         return;
     }
+    iShowLoadedImage(bgX1, 0, &bg);
+    iShowLoadedImage(bgX2, 0, &bg);
     // DRAW PLAYER SPRITES
     if(isJumping) {
         iShowLoadedImage(playerX, playerY + jumpY, &jumpFrames[playerFrame]);
@@ -180,6 +189,21 @@ void iKeyUp(unsigned char key) {
 }
 
 void iSpecialKeyPress(unsigned char key) {}
+
+void iMouseClick(int button, int state, int mx, int my)
+{
+    if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
+    {
+        if (mx >= 300 && mx <= 450 && my >= 250 && my <= 300)
+        {
+            printf("Start Button Clicked\n");
+        }
+    }
+    if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN)
+    {
+        printf("Right Button Clicked\n");
+    }
+}
 
 
 void loadResources() {
@@ -263,7 +287,7 @@ void loadResources() {
 int main()
 {
     loadResources();
-    moveTimer = iSetTimer(30, moveObstacle);
+    moveTimer = iSetTimer(30, moveObsbg);
     jumpTimer = iSetTimer(30, jumpUpdate);
     frameTimer = iSetTimer(80, updateFrame);
     srand(time(0));
