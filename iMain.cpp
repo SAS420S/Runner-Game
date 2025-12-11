@@ -16,7 +16,7 @@ Image obstacleImg, obstacleImg2, bg, mbg;
 Image info, muson, musoff, menu, restart;
 Image box0, box1, BigBox;
 
-// GAME VARIABLES
+//Game variables 
 int gameState = 0;
 
 int playerX = 150, playerY = 150;
@@ -109,6 +109,9 @@ void moveObsbg()
         else{
             gameOver = 1;
             playerFrame = 0;
+            if(music){
+                iPlaySound("assets/sounds/jumping.wav", 0, 80);
+            }
         }
     }
 }
@@ -191,6 +194,12 @@ void iDraw(){
         iShowLoadedImage(0, 0, &mbg);
         iShowLoadedImage(230, 120, &BigBox);
         iShowText(400, 550, "HIGH SCORE", "assets/fonts/Sixtyfour-Regular-VariableFont_BLED,SCAN.ttf", 45);
+        sprintf(str, "1. %d", high[0]);
+        iShowText(400, 450, str, "assets/fonts/Antonio-Bold.ttf", 30);
+        sprintf(str, "2. %d", high[1]);
+        iShowText(400, 400, str, "assets/fonts/Antonio-Bold.ttf", 30);
+        sprintf(str, "3. %d", high[2]);
+        iShowText(400, 500, str, "assets/fonts/Antonio-Bold.ttf", 30);
         iShowLoadedImage(470, 70, &box1);
         iShowText(540, 92, "BACK", "assets/fonts/Antonio-Bold.ttf", 30);
 
