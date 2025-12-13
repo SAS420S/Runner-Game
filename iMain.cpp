@@ -13,7 +13,8 @@ Image slideFrames[10];
 Image deathFrames[10];
 Image obstacleImg, obstacleImg2, bg, mbg;
 Image info, muson, musoff, menu, restart;
-Image box0, box1, BigBox, MiniBox;
+Image box1, BigBox, MiniBox;
+Image profile, Shahin, Jillur;
 
 //Game variables
 int gameState = 0;
@@ -34,13 +35,19 @@ int Speed;
 
 int gameOver = 0, music = 1, pause = 0;
 int score = 0, high[4];
-int isHigh;
+double tempScore;
+int isHigh, tempCount = 0;
 int TimerIndex[4];
 char str[40];
 
 void scoreUpdate(){
     if(gameState == 1 && gameOver == 0){
-        score++;
+        if(tempCount == 0){
+            tempScore = (double)score;
+            tempCount++;
+        }
+        tempScore += (double)Speed/10;
+        score = (int)tempScore;
     }
 }
 
@@ -96,10 +103,11 @@ void resetGame()
     isSliding = 0;
     playerFrame = 0;
     score = 0;
+    tempCount = 0;
 }
 
 void createNewObstacle(){
-    obsX = (rand()%500) + 1200;
+    obsX = (rand()%300) + 1200;
     if(rand() % 2 == 0){
         obsType = 1;
     }
@@ -108,7 +116,7 @@ void createNewObstacle(){
     }
     if(obsType == 2){
         obsH = 20;
-        obsY = 250;
+        obsY = 245;
     }
     else{
         obsH = 40;
@@ -126,8 +134,8 @@ void moveObsbg()
         return;
     }
     Speed = 10 + score / 50;
-    if(Speed >= 20){
-        Speed = 20;
+    if(Speed >= 30){
+        Speed = 30;
     }
     obsX -= Speed;
     bgX1 -= Speed;
@@ -228,13 +236,13 @@ void iDraw(){
         iSetColor(255, 255, 255);
         iShowText(570, 420, str, "assets/fonts/Antonio-Bold.ttf", 40);
         if(isHigh == 1){
-            iShowText(470, 360, "Incredible\! You\'ve take the top high score\!", "assets/fonts/Antonio-Bold.ttf", 25);
+            iShowText(470, 360, "Incredible! You\'ve take the top high score!", "assets/fonts/Antonio-Bold.ttf", 25);
         }
         else if(isHigh == 2){
-            iShowText(470, 360, "Great\! You reached the 2nd highest score\!", "assets/fonts/Antonio-Bold.ttf", 25);
+            iShowText(470, 360, "Great! You reached the 2nd highest score!", "assets/fonts/Antonio-Bold.ttf", 25);
         }
         else if(isHigh == 3){
-            iShowText(470, 360, "Nice\! You made it to top 3 high scores\!", "assets/fonts/Antonio-Bold.ttf", 25);
+            iShowText(470, 360, "Nice! You made it to top 3 high scores!", "assets/fonts/Antonio-Bold.ttf", 25);
         }
         return;
     }
@@ -288,7 +296,19 @@ void iDraw(){
         iText(60, 590, about1, GLUT_BITMAP_HELVETICA_18);
         iText(60, 560, about2, GLUT_BITMAP_HELVETICA_18);
         iText(60, 530, "a high score.", GLUT_BITMAP_HELVETICA_18);
-        iText(810, 410, "Special thanks to: ", GLUT_BITMAP_HELVETICA_18);
+        iText(900, 510, "Special thanks to: ", GLUT_BITMAP_HELVETICA_18);
+        iText(900, 480, "Md. Rafiqul Islam", GLUT_BITMAP_HELVETICA_18);
+        iText(900, 455, "Lecturer, IRE, UFTB", GLUT_BITMAP_HELVETICA_18);
+        iShowText(400, 460, "Developed by:", "assets/fonts/RubikDoodleShadow-Regular.ttf", 35);
+        iShowLoadedImage(480, 350, &Shahin);
+        iText(470, 320, "Md. Shahin Alam", GLUT_BITMAP_HELVETICA_18);
+        iText(490, 290, "ID: 2401025", GLUT_BITMAP_HELVETICA_18);
+        iShowLoadedImage(120, 270, &Jillur);
+        iText(100, 240, "Md. Jillur Rahman", GLUT_BITMAP_HELVETICA_18);
+        iText(120, 210, "ID: 2401005", GLUT_BITMAP_HELVETICA_18);
+        iShowLoadedImage(820, 270, &profile);
+        iText(790, 240, "Mst. Fatematuj Johra Ema", GLUT_BITMAP_HELVETICA_18);
+        iText(820, 210, "ID: 2401026", GLUT_BITMAP_HELVETICA_18);
         return;
     }
     iShowLoadedImage(bgX1, 0, &bg);
@@ -459,7 +479,7 @@ void loadImages()
 	iResizeImage(&obstacleImg, 48, 48.0 / Ratio);
     iLoadImage(&obstacleImg2, "assets/images/obs2.png");
     Ratio = (float)obstacleImg2.width / obstacleImg2.height;
-	iResizeImage(&obstacleImg2, 150, 150.0 / Ratio);
+	iResizeImage(&obstacleImg2, 160, 160.0 / Ratio);
 
 	iLoadImage(&bg, "assets/images/bg.jpg");
 	iResizeImage(&bg, 1200, 800);
@@ -477,9 +497,15 @@ void loadImages()
     iLoadImage(&restart, "assets/images/restart.png");
 	iResizeImage(&restart, 42, 42);
 
-    iLoadImage(&box0, "assets/images/sbox.png");
-    Ratio = (float)box0.width / box0.height;
-	iResizeImage(&box0, 150, 150.0 / Ratio);
+    iLoadImage(&profile, "assets/images/profile.png");
+    Ratio = (float)profile.width / profile.height;
+	iResizeImage(&profile, 120, 120.0 / Ratio);
+	iLoadImage(&Shahin, "assets/images/Shahin.png");
+    Ratio = (float)Shahin.width / Shahin.height;
+	iResizeImage(&Shahin, 100, 100.0 / Ratio);
+	iLoadImage(&Jillur, "assets/images/Jillur.png");
+    Ratio = (float)Jillur.width / Jillur.height;
+	iResizeImage(&Jillur, 100, 100.0 / Ratio);
     iLoadImage(&box1, "assets/images/sbox2.png");
     Ratio = (float)box1.width / box1.height;
 	iResizeImage(&box1, 200, 200.0 / Ratio);
@@ -506,4 +532,4 @@ int main()
     iStartMainLoop();
     return 0;
 }
-    
+
