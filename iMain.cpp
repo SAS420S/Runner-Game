@@ -17,9 +17,9 @@ Image box1, BigBox, MiniBox;
 Image profile, Shahin, Jillur;
 
 //Game variables
-int gameState = 0;
+int gameState = 0;//0--> Menu|| 1-->Game|| 2--> High score || 3--> Instruction || 4 --> About
 
-int playerX = 150, playerY = 150;
+int playerX = 150, playerY = 150; //Player Position
 int bgX1 = 0, bgX2 = 1200;
 
 int jumpY = 0;
@@ -29,13 +29,13 @@ int jumpUp = 1;
 int isSliding = 0, slideCount = 0;
 int playerFrame = 0;
 
-int obsX = 1200, obsY = 150, obsW = 40, obsH = 40;
+int obsX = 1200, obsY = 150, obsW = 40, obsH = 40; //Obstacle Position and size
 int obsType = 1;
 int Speed;
 
 int gameOver = 0, music = 1, pause = 0;
 int score = 0, high[4];
-double tempScore;
+float tempScore;
 int isHigh, tempCount = 0;
 int TimerIndex[4];
 char str[40];
@@ -43,14 +43,14 @@ char str[40];
 void scoreUpdate(){
     if(gameState == 1 && gameOver == 0){
         if(tempCount == 0){
-            tempScore = (double)score;
+            tempScore = (float)score;
             tempCount++;
         }
-        tempScore += (double)Speed/10;
+        tempScore += (float)Speed/10;
         score = (int)tempScore;
     }
 }
-
+//High Score Check
 int updateHigh()
 {
     int temp;
@@ -80,17 +80,22 @@ int updateHigh()
         return 0;
     }
 }
-
+//Update Frame
 void updateFrame()
 {
-    if(gameState != 1) return;
-    if(gameOver) {
-        // Death animation runs slower
-        if(playerFrame < 9) playerFrame++;
-        return;
+    if(gameState == 1){
+        if(gameOver){
+            // Death animation runs slower
+            if(playerFrame < 9){
+                playerFrame++;
+            }
+            return;
+        }
+        playerFrame++;
+        if(playerFrame >= 10){
+            playerFrame = 0;
+        }
     }
-    playerFrame++;
-    if(playerFrame >= 10) playerFrame = 0;
 }
 
 void resetGame()
@@ -168,9 +173,11 @@ void moveObsbg()
         }
     }
 }
-
+//Update Jump and Slide
 void jumpSlideUpdate(){
-    if(gameState != 1) return;
+    if(gameState != 1){
+        return;
+    }
     if(isSliding){
         slideCount++;
         if(slideCount >= 23){
@@ -181,7 +188,9 @@ void jumpSlideUpdate(){
     if(isJumping){
         if(jumpUp){
             jumpY += 10;
-            if(jumpY >= 120) jumpUp = 0;
+            if(jumpY >= 120){
+                jumpUp = 0;
+            }
         }
         else{
             jumpY -= 10;
@@ -193,10 +202,10 @@ void jumpSlideUpdate(){
         }
     }
 }
-
+//System Calls iDraw Function Again and Again
 void iDraw(){
     iClear();
-    // MENU
+    //Menu
     if(gameState == 0) {
         iShowLoadedImage(0, 0, &mbg);
         iShowLoadedImage(25, 600, &info);
@@ -232,7 +241,7 @@ void iDraw(){
         iShowLoadedImage(760, 210, &box1);
         iShowLoadedImage(783, 227, &menu);
         iShowText(830, 235, "MENU", "assets/fonts/Antonio-Bold.ttf", 30);
-        sprintf(str, " SCORE: %d", score);
+        sprintf(str, "SCORE: %d", score);
         iSetColor(255, 255, 255);
         iShowText(570, 420, str, "assets/fonts/Antonio-Bold.ttf", 40);
         if(isHigh == 1){
@@ -246,6 +255,7 @@ void iDraw(){
         }
         return;
     }
+    //High Score
     if(gameState == 2){
         iShowLoadedImage(0, 0, &mbg);
         iShowLoadedImage(230, 120, &BigBox);
@@ -270,6 +280,7 @@ void iDraw(){
         iShowText(540, 92, "BACK", "assets/fonts/Antonio-Bold.ttf", 30);
         return;
     }
+    //Instruction
     if(gameState == 3){
         iShowLoadedImage(0, 0, &mbg);
         iShowLoadedImage(230, 120, &BigBox);
@@ -285,6 +296,7 @@ void iDraw(){
         iShowText(350, 300, "Press \"SPACE\" Button for Resume the Game", "assets/fonts/Antonio-Bold.ttf", 25);
         return;
     }
+    //About
     if(gameState == 4){
         iShowLoadedImage(0, 0, &mbg);
         iSetColor(0, 0, 0);
@@ -330,7 +342,7 @@ void iDraw(){
         default: iShowLoadedImage(obsX, obsY, &obstacleImg);
     }
 }
-
+//System will call iKeyPress and iSpecialKeyPress function when user input something by keyboard
 void iKeyPress(unsigned char key){
     if(gameState == 1 && key == ' '){
         if(!pause){
@@ -347,7 +359,6 @@ void iKeyPress(unsigned char key){
         }
     }
 }
-
 void iSpecialKeyPress(unsigned char key)
 {
     if(gameState == 1){
@@ -373,7 +384,7 @@ void iSpecialKeyPress(unsigned char key)
         }
     }
 }
-
+//System will call iMouseClick function when user click something by Mouse
 void iMouseClick(int button, int state, int mx, int my)
 {
     if(button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
@@ -518,7 +529,6 @@ void loadImages()
 
 int main()
 {
-
     FILE *fptr = fopen("high.txt", "r");
     fscanf(fptr, "%d %d %d", &high[0], &high[1], &high[2]);
     fclose(fptr);
@@ -528,7 +538,7 @@ int main()
     TimerIndex[2] = iSetTimer(80, updateFrame);
     TimerIndex[3] = iSetTimer(500, scoreUpdate);
     srand(time(0));
-    iWindowedMode(1200, 800, "Road Runner");
+    iWindowedMode(1200, 700, "Road Runner");
     iStartMainLoop();
     return 0;
 }
